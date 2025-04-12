@@ -1,0 +1,40 @@
+# IDE and Editor files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+# Build directories
+build/
+*.o
+*.obj
+*.exe
+*.out
+*.app
+
+# Compiled files
+*.a
+*.so
+*.dylib
+*.dll
+
+
+# Dependencies
+deps/
+lib/
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
