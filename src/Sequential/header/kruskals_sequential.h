@@ -1,8 +1,11 @@
 #ifndef KRUSKALS_SEQUENTIAL_H
 #define KRUSKALS_SEQUENTIAL_H
 
-#include<bits/stdc++.h>
-#include<sequential_sort.h>
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <utility>
+#include <sequential_sort.h>
 
 using namespace std;
 

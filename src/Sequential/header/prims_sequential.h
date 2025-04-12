@@ -1,7 +1,9 @@
 #ifndef PRIMS_SEQUENTIAL_H
 #define PRIMS_SEQUENTIAL_H
 
-#include<bits/stdc++.h>
+#include <vector>
+#include <iostream>
+#include <climits>
 #include<sequential_sort.h>
 
 using namespace std;
