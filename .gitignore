@@ -41,7 +41,5 @@ CMakeCache.txt
 cmake_install.cmake
 Makefile
 
-# Logs and databases
-*.log
-*.sqlite
-*.db
+# Test files
+*.txt

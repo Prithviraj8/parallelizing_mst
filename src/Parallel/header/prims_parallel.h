@@ -5,7 +5,7 @@
 #include<omp.h>
 #include <parallel/algorithm>
 #include<parallel_sort.h>
-#include <parallel/settings.h>
+// #include <parallel/settings.h>
 #include <cmath>
 
 using namespace std;
@@ -15,7 +15,7 @@ class PrimsGraph_p {
     // selection for sorting algo
     int selection;
     // Store all edges
-    vector<vector<int>> graph;
+    vector<vector<int> > graph;
     // Parent node for the current
     vector<int> parent;
     // Weight to the node

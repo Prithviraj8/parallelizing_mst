@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <tuple>
 #include <boruvka_parallel.h>
 #include <prims_parallel.h>
 #include <kruskals_parallel.h>
@@ -6,7 +7,7 @@
 using namespace std;
 
 // Function to parse the input text file and store edges in a vector
-void parseEdges(const string& filename, vector<tuple<int, int, int>>& edges) {
+void parseEdges(const string& filename, vector<tuple<int, int, int> >& edges) {
     ifstream file(filename);  // Open the file
 
     if (!file.is_open()) {
@@ -46,7 +47,7 @@ int main(int argc, char* argv[]) {
     selection = atoi(argv[4]);
     ifile += argv[5];
 
-    vector<tuple<int,int,int>> edges;
+    vector<tuple<int,int,int> > edges;
     parseEdges(ifile, edges);
 
     // Declare graphs for the three methods
