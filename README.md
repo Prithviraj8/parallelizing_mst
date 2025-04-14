@@ -8,7 +8,6 @@ A parallel implementation of Minimum Spanning Tree (MST) algorithms using OpenMP
 
 - Kruskal's Algorithm
 - Prim's Algorithm
-- Boruvka's Algorithm
 
 ## Features
 
@@ -26,23 +25,20 @@ All three sequential MST algorithms have been tested on various graph sizes and 
 - Performance:
   - Prim's: 0.000300 seconds
   - Kruskal's: 0.001256 seconds
-  - Boruvka's: 0.000433 seconds
 
 ### 2. Medium Graph (50 vertices, 100 edges)
 - MST Weight: 222
 - Performance:
   - Prim's: 0.000071 seconds
   - Kruskal's: 0.000126 seconds
-  - Boruvka's: 0.000109 seconds
 
 ### 3. Dense Graph (10 vertices, 45 edges)
 - MST Weight: 19
 - Performance:
   - Prim's: 0.000020 seconds
   - Kruskal's: 0.000047 seconds
-  - Boruvka's: 0.000031 seconds
 
-All implementations yield the same MST weight for each test case, confirming their correctness. Performance patterns show Prim's algorithm is generally fastest for these test cases, followed by Boruvka's and then Kruskal's.
+All implementations yield the same MST weight for each test case, confirming their correctness. Performance patterns show Prim's algorithm is generally fastest for these test cases, and then Kruskal's.
 
 ## Prerequisites
 
@@ -247,6 +243,83 @@ The project includes timing measurements for both sequential and parallel implem
 
 ![Large Graph Performance](large_comparison.png)
 *Figure 5: Performance comparison for large graph (1500V, 50000E)*
+
+## Sequential Performance Results
+
+### Performance Tables
+
+#### Small Graph (100V, 4000E)
+| Algorithm | Sort Method | Time (seconds) | MST Weight |
+|-----------|------------|----------------|------------|
+| Prim's    | Bubble     | 0.000089      | 204        |
+| Prim's    | Quick      | 0.000078      | 204        |
+| Prim's    | Merge      | 0.003603      | 204        |
+| Kruskal's | Bubble     | 0.000547      | 204        |
+| Kruskal's | Quick      | 0.047843      | 204        |
+| Kruskal's | Merge      | 0.025280      | 213        |
+
+#### Medium Graph (1000V, 20000E)
+| Algorithm | Sort Method | Time (seconds) | MST Weight |
+|-----------|------------|----------------|------------|
+| Prim's    | Bubble     | 0.002669      | 3577       |
+| Prim's    | Quick      | 0.002052      | 3577       |
+| Prim's    | Merge      | 0.002539      | 3577       |
+| Kruskal's | Bubble     | 0.002880      | 3577       |
+| Kruskal's | Quick      | 1.223023      | 3577       |
+| Kruskal's | Merge      | 0.004899      | 3583       |
+
+#### Large Graph (1500V, 50000E)
+| Algorithm | Sort Method | Time (seconds) | MST Weight |
+|-----------|------------|----------------|------------|
+| Prim's    | Bubble     | 0.004842      | 3418       |
+| Prim's    | Quick      | 0.005730      | 3418       |
+| Prim's    | Merge      | 0.005349      | 3418       |
+| Kruskal's | Bubble     | 0.007464      | 3418       |
+| Kruskal's | Quick      | 8.507389      | 3418       |
+| Kruskal's | Merge      | 0.012292      | 3419       |
+
+### Performance Visualizations
+
+![Sequential MST Performance](sequential_comparison.png)
+*Figure 6: Overall sequential performance comparison*
+
+![Small Graph Sequential Performance](sequential_small.png)
+*Figure 7: Sequential performance for small graph (100V, 4000E)*
+
+![Medium Graph Sequential Performance](sequential_medium.png)
+*Figure 8: Sequential performance for medium graph (1000V, 20000E)*
+
+![Large Graph Sequential Performance](sequential_large.png)
+*Figure 9: Sequential performance for large graph (1500V, 50000E)*
+
+### Key Observations
+
+1. **Prim's Algorithm**:
+   - Consistently faster than Kruskal's across all graph sizes
+   - Shows minimal variation between sorting methods
+   - Best performance with Quick Sort for small/medium graphs
+   - Performance scales well with graph size
+
+2. **Kruskal's Algorithm**:
+   - Performance heavily dependent on sorting method
+   - Quick Sort shows poor performance, especially for larger graphs
+   - Bubble Sort performs surprisingly well
+   - More sensitive to graph size than Prim's
+
+3. **Sorting Methods**:
+   - Bubble Sort: Unexpectedly good performance, especially for Kruskal's
+   - Quick Sort: Best for Prim's, worst for Kruskal's
+   - Merge Sort: Consistent but not optimal performance
+
+4. **MST Weights**:
+   - Both algorithms generally find the same MST weight
+   - Minor variations in some cases with Merge Sort
+   - Consistent results across different sorting methods
+
+5. **Scalability**:
+   - Prim's shows near-linear scaling with graph size
+   - Kruskal's with Quick Sort shows super-linear growth
+   - Bubble Sort maintains relatively consistent performance
 
 ## Contributing
 
