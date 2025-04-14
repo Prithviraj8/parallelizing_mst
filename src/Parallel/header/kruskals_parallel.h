@@ -5,7 +5,7 @@
 #include<omp.h>
 #include<parallel/algorithm>
 #include <parallel_sort.h>
-#include <parallel/settings.h>
+// #include <parallel/settings.h>
 #include <cmath>
 
 using namespace std;
@@ -26,8 +26,8 @@ class KruskalsGraph_p {
     // selection for sorting algo
     int NUMTHREADS;
     int selection;
-    vector<vector<int>> edgeList;
-    vector<vector<int>> Parent;
+    vector<vector<int> > edgeList;
+    vector<vector<int> > Parent;
 
     int Vertices;
 
