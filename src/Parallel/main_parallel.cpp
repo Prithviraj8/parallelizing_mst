@@ -1,6 +1,5 @@
 #include <bits/stdc++.h>
 #include <tuple>
-#include <boruvka_parallel.h>
 #include <prims_parallel.h>
 #include <kruskals_parallel.h>
 
@@ -50,8 +49,7 @@ int main(int argc, char* argv[]) {
     vector<tuple<int,int,int> > edges;
     parseEdges(ifile, edges);
 
-    // Declare graphs for the three methods
-    BoruvkaGraph_p* g_b = new BoruvkaGraph_p(vertices, NUMTHREADS);
+    // Declare graphs for the two methods
     PrimsGraph_p* g_p = new PrimsGraph_p(vertices, selection, NUMTHREADS);
     KruskalsGraph_p* g_k = new KruskalsGraph_p(vertices, selection, NUMTHREADS);
 
@@ -59,7 +57,6 @@ int main(int argc, char* argv[]) {
     for (const auto& edge : edges) {
         int u, v, w;
         tie(u, v, w) = edge;  // Extract u, v, w from the tuple
-        g_b -> EnterEdges(u, v, w);
         g_p -> EnterEdges(u, v, w);
         g_k -> EnterEdges(u, v, w);
     }
@@ -89,20 +86,6 @@ int main(int argc, char* argv[]) {
     // Calculate the elapsed time in seconds
     elapsed = end - start;
     printf("Elapsed time for Kruskal's Parallel MST calculation for %d vertices, %d edges and %d threads: %lf seconds\n\n", vertices, edge, NUMTHREADS, elapsed.count());
-
-    // Get the start time
-    start = std::chrono::high_resolution_clock::now();
-
-    // Run Boruvka's MST algorithm
-    g_b -> BoruvkaMST();
-
-    // Get the end time
-    end = std::chrono::high_resolution_clock::now();
-
-    // Calculate the elapsed time in seconds
-    elapsed = end - start;
-    printf("Elapsed time for Boruvka's Parallel MST calculation for %d vertices, %d edges and %d threads: %lf seconds\n\n", vertices, edge, NUMTHREADS, elapsed.count());
-
 
     return 0;
 }
