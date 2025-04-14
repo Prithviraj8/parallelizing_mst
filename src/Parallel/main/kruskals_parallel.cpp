@@ -77,14 +77,8 @@ void KruskalsGraph_p :: SortList() {
 
         case 4 : parallelMergeSort(edgeList, NUMTHREADS);
                  break;
-                 
-        case 5 : bitonicSortWrapper(edgeList, NUMTHREADS, 1);
-                 break;
-        
-        case 6 : Wrapper(edgeList, NUMTHREADS);
-                 break;
 
-        default : printf("Enter correct selection for sorting algorithm!\n");
+        default : printf("Enter correct selection for sorting algorithm (1-4)!\n");
                   exit(0);
     }
 

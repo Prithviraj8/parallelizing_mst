@@ -58,13 +58,7 @@ pair<int, int> PrimsGraph_p::FindNextMin() {
         case 4 : parallelMergeSort(Thread_values, NUMTHREADS);               // Parallel Merge Sort
                  break;
 
-        case 5 : bitonicSortWrapper(Thread_values, NUMTHREADS, 1);              // Naive Parallel Bitonic sort
-                 break;
-
-        case 6 : Wrapper(Thread_values, NUMTHREADS);                            // Optimized Bitonic Sorting
-                 break;
-
-        default : printf("Enter correct selection for sorting algorithm!\n");
+        default : printf("Enter correct selection for sorting algorithm (1-4)!\n");
                   exit(0);
     }
 
