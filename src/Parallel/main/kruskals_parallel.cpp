@@ -62,24 +62,20 @@ void KruskalsGraph_p :: EnterEdges(int& u, int& v, int& w) {
 void KruskalsGraph_p :: SortList() {
     // Select the parallel algorithm to sort the edge list
     switch(selection) {
-        case 1 : {
-                    // Sort in parallel using gnu parallel impl. (-D_GLIBCXX_PARALLEL)
-                    // Set the number of threads
-                    omp_set_num_threads(NUMTHREADS);
-                    __gnu_parallel :: sort(edgeList.begin(), edgeList.end());
-                    break;
-                }
-        case 2 : parallelBubbleSort(edgeList, NUMTHREADS);
+        case 1 : // Bubble Sort
+                 parallelBubbleSort(edgeList, NUMTHREADS);
                  break;
 
-        case 3 : parallelQuickSort(edgeList, NUMTHREADS);
+        case 2 : // Quick Sort
+                 parallelQuickSort(edgeList, NUMTHREADS);
                  break;
 
-        case 4 : parallelMergeSort(edgeList, NUMTHREADS);
+        case 3 : // Merge Sort
+                 parallelMergeSort(edgeList, NUMTHREADS);
                  break;
 
-        default : printf("Enter correct selection for sorting algorithm (1-4)!\n");
-                  exit(0);
+        default : printf("Please select a valid sorting algorithm (1: Bubble, 2: Quick, 3: Merge)\n");
+                 exit(0);
     }
 
     return;

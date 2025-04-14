@@ -26,7 +26,6 @@ build/
 # Generated executables
 test_prims
 test_kruskals
-test_boruvka
 sequential
 parallel
 obj/

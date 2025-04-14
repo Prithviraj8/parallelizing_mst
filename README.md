@@ -91,20 +91,15 @@ g++ -std=c++11 -o edges GenerateEdges.cpp
 
 ## Sorting Algorithms
 
-### Parallel Implementation (6 options):
-1. In-built parallel_sort
-2. Parallel Bubble Sort
-3. Parallel Quick Sort
-4. Parallel Merge Sort
-5. Naive Parallel Bitonic Sort
-6. Optimized Bitonic Sort
+### Parallel Implementation:
+1. Bubble Sort
+2. Quick Sort
+3. Merge Sort
 
-### Sequential Implementation (5 options):
-1. In-built STL sort
-2. Bubble Sort
-3. Quick Sort
-4. Merge Sort
-5. Naive Bitonic Sort
+### Sequential Implementation:
+1. Bubble Sort
+2. Quick Sort
+3. Merge Sort
 
 ## Example
 
@@ -112,9 +107,48 @@ g++ -std=c++11 -o edges GenerateEdges.cpp
 # Generate a graph with 4000 vertices and 1,000,000 edges
 ./edges 4000 1000000 edges.txt
 
-# Run parallel implementation with 4 threads using Optimized Bitonic Sort
-./parallel 4 4000 1000000 6 edges.txt
+# Run parallel implementation with Merge Sort (option 3), 4000 vertices & 1000000 edges
+./parallel_mst 3 4000 1000000 3 edges.txt
 ```
+
+## Running Tests
+
+The project includes shell scripts to automate testing of both sequential and parallel implementations across different graph sizes and sorting methods.
+
+### Running Parallel Tests
+
+```bash
+cd src
+chmod +x run_tests.sh
+./run_tests.sh
+```
+
+This will:
+1. Test three graph configurations:
+   - Small: 100 vertices, 4000 edges
+   - Medium: 1000 vertices, 20000 edges
+   - Large: 1500 vertices, 50000 edges
+2. Test all three sorting methods:
+   - Bubble Sort (1)
+   - Quick Sort (2)
+   - Merge Sort (3)
+3. Run each configuration with 1, 2, 4, and 8 threads
+4. Save results in the `results` directory
+
+### Running Sequential Tests
+
+```bash
+cd src
+chmod +x run_tests_seq.sh
+./run_tests_seq.sh
+```
+
+This will:
+1. Test the same three graph configurations as parallel tests
+2. Test all three sorting methods
+3. Save results in the `results` directory
+
+The test results are used to generate the performance comparisons shown in the following sections.
 
 ## Performance
 
