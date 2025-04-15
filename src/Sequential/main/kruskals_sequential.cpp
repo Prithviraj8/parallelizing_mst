@@ -59,35 +59,28 @@ void KruskalsGraph :: EnterEdges(int& u, int& v, int& w) {
 }
 
 void KruskalsGraph :: SortList() {
-
-        // Select the parallel algorithm to sort the edge list
+    // Select the sorting algorithm to sort the edge list
     switch(selection) {
-        case 1 : // Sort in O(n.log(n))
-                 sort(edgeList.begin(), edgeList.end());
+        case 1 : // Bubble Sort
+                 SequentialBubbleSort(edgeList);
                  break;
 
-        case 2 : SequentialBubbleSort(edgeList);
-                 break;
-
-        case 3 : {
+        case 2 : { // Quick Sort
                     int length = edgeList.size();
                     int s = 0, e = length - 1;
                     SequentialQuickSort(edgeList, s, e);
                     break;
                 }
 
-        case 4 : {
+        case 3 : { // Merge Sort
                     int length = edgeList.size();
                     int s = 0, e = length - 1;
                     SequentialMergeSort(edgeList, s, e);
                     break;
-                 }
+                }
 
-        case 5 : SequentialBitonicSortWrapper(edgeList, 1);
-                 break;
-
-        default : printf("Enter correct selection for sorting algorithm!\n");
-                  exit(0);
+        default : printf("Please select a valid sorting algorithm (1: Bubble, 2: Quick, 3: Merge)\n");
+                 exit(0);
     }
 
     return;

@@ -1,4 +1,4 @@
-// sequential_sort.cpp
+// Sequential Sorting Algorithms
 #include "sequential_sort.h"
 
 
@@ -85,60 +85,4 @@ void SequentialMergeSort(std::vector<std::vector<int>>& edgeList, int left, int 
         // Merge the sorted halves
         merge(edgeList, left, mid, right);
     }
-}
-
-
-// ========================================
-// Bitonic Sort
-// ========================================
-// Function to compare and swap edges based on weights
-void bitonicCompareSequential(std::vector<std::vector<int>>& edgeList, int i, int j, bool ascending) {
-    if (ascending == (edgeList[i][0] > edgeList[j][0])) {
-        std::swap(edgeList[i], edgeList[j]);
-    }
-}
-
-void bitonicMergeSequential(std::vector<std::vector<int>>& edgeList, int low, int count, bool ascending) {
-    if (count > 1) {
-        int mid = count / 2;
-
-        for (int i = low; i < low + mid; i++) {
-            bitonicCompareSequential(edgeList, i, i + mid, ascending);
-        }
-
-        bitonicMergeSequential(edgeList, low, mid, ascending);
-        bitonicMergeSequential(edgeList, low + mid, mid, ascending);
-    }
-}
-
-void bitonicSortSequential(std::vector<std::vector<int>>& edgeList, int low, int count, bool ascending) {
-    if (count > 1) {
-        int mid = count / 2;
-
-        // Sort first half in ascending order
-        bitonicSortSequential(edgeList, low, mid, true);
-
-        // Sort second half in descending order
-        bitonicSortSequential(edgeList, low + mid, mid, false);
-
-        // Merge the two halves
-        bitonicMergeSequential(edgeList, low, count, ascending);
-    }
-}
-
-// Wrapper function for Bitonic Sort Sequential
-void SequentialBitonicSortWrapper(std::vector<std::vector<int>>& edgeList, bool ascending) {
-    int n = edgeList.size();
-
-    int powerOfTwo = 1;
-    while (powerOfTwo < n) {
-        powerOfTwo *= 2;
-    }
-    for (int i = n; i < powerOfTwo; i++) {
-        edgeList.push_back({INT_MAX, -1, -1});
-    }
-
-    bitonicSortSequential(edgeList, 0, edgeList.size(), ascending);
-
-    edgeList.resize(n); // Remove padding
 }

@@ -6,14 +6,13 @@
 #include <sstream>
 #include <chrono>
 #include <cstdlib>
-#include <boruvka_sequential.h>
 #include <prims_sequential.h>
 #include <kruskals_sequential.h>
 
 using namespace std;
 
 // Function to parse the input text file and store edges in a vector
-void parseEdges(const string& filename, vector<tuple<int, int, int>>& edges) {
+void parseEdges(const string& filename, vector<tuple<int, int, int> >& edges) {
     ifstream file(filename);  // Open the file
 
     if (!file.is_open()) {
@@ -34,9 +33,8 @@ void parseEdges(const string& filename, vector<tuple<int, int, int>>& edges) {
     file.close();  // Close the file
 }
 
-
 int main(int argc, char* argv[]) {
-    if (argc < 4) {
+    if (argc < 5) {
         printf("./sequential <vertices> <edges> <selection> <edges_file>\n");
         exit(0);
     }
@@ -51,11 +49,10 @@ int main(int argc, char* argv[]) {
     selection = atoi(argv[3]);
     ifile += argv[4];
 
-    vector<tuple<int,int,int>> edges;
+    vector<tuple<int,int,int> > edges;
     parseEdges(ifile, edges);
 
-    // Declare graphs for the three methods
-    BoruvkaGraph* g_b = new BoruvkaGraph(vertices);
+    // Declare graphs for the two methods
     PrimsGraph* g_p = new PrimsGraph(vertices, selection);
     KruskalsGraph* g_k = new KruskalsGraph(vertices, selection);
 
@@ -63,7 +60,6 @@ int main(int argc, char* argv[]) {
     for (const auto& edge : edges) {
         int u, v, w;
         tie(u, v, w) = edge;  // Extract u, v, w from the tuple
-        g_b -> EnterEdges(u, v, w);
         g_p -> EnterEdges(u, v, w);
         g_k -> EnterEdges(u, v, w);
     }
@@ -94,19 +90,9 @@ int main(int argc, char* argv[]) {
     elapsed = end - start;
     printf("Elapsed time for Kruskal's Sequential MST calculation for %d vertices, %d edges: %lf seconds\n\n", vertices, edge, elapsed.count());
 
-    // Get the start time
-    start = std::chrono::high_resolution_clock::now();
-
-    // Run Boruvka's MST algorithm
-    g_b -> BoruvkaMST();
-
-    // Get the end time
-    end = std::chrono::high_resolution_clock::now();
-
-    // Calculate the elapsed time in seconds
-    elapsed = end - start;
-    printf("Elapsed time for Boruvka's Sequential MST calculation for %d vertices, %d edges: %lf seconds\n\n", vertices, edge, elapsed.count());
-
+    // Clean up
+    delete g_p;
+    delete g_k;
 
     return 0;
 }
