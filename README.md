@@ -69,7 +69,7 @@ cd ../
 
 3. Build the edge generator:
 ```bash
-g++ -std=c++11 -o edges GenerateEdges.cpp
+g++ -std=c++11 -o edges generateEdges.cpp
 ```
 
 ## Usage

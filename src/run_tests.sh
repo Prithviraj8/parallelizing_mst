@@ -12,7 +12,7 @@ edges=(4000 20000 50000)
 sorting_methods=(1 2 3)
 
 # Compile the edge generator if not already compiled
-g++ -std=c++11 GenerateEdges.cpp -o edges
+g++ -std=c++11 generateEdges.cpp -o edges
 
 # Create results directory
 mkdir -p results

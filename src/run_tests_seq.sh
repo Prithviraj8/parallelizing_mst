@@ -28,7 +28,7 @@ run_test() {
 echo "Compiling..."
 cd Sequential && make clean && make sequential
 cd ..
-g++ -o generate_large_graph GenerateEdges.cpp
+g++ -o generate_large_graph generateEdges.cpp
 
 # Create results directory if it doesn't exist
 mkdir -p results
