@@ -16,30 +16,6 @@ A parallel implementation of Minimum Spanning Tree (MST) algorithms using OpenMP
 - Performance comparison between sequential and parallel versions
 - Graph generation utility
 
-## Sequential Implementations Validation
-
-All three sequential MST algorithms have been tested on various graph sizes and densities to validate correctness and performance:
-
-### 1. Large Graph (100 vertices, 1000 edges)
-- MST Weight: 622
-- Performance:
-  - Prim's: 0.000300 seconds
-  - Kruskal's: 0.001256 seconds
-
-### 2. Medium Graph (50 vertices, 100 edges)
-- MST Weight: 222
-- Performance:
-  - Prim's: 0.000071 seconds
-  - Kruskal's: 0.000126 seconds
-
-### 3. Dense Graph (10 vertices, 45 edges)
-- MST Weight: 19
-- Performance:
-  - Prim's: 0.000020 seconds
-  - Kruskal's: 0.000047 seconds
-
-All implementations yield the same MST weight for each test case, confirming their correctness. Performance patterns show Prim's algorithm is generally fastest for these test cases, and then Kruskal's.
-
 ## Prerequisites
 
 ### 1. **System Requirements**:
