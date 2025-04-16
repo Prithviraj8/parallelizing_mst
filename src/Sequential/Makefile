@@ -16,7 +16,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS)
+	rm -f *.o main/*.o
 	rm -f $(TARGET)
 
 .PHONY: all clean sequential_mst
