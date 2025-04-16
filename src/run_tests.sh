@@ -5,6 +5,10 @@ echo "=== Compiling parallel implementations ==="
 cd Parallel
 make clean
 make parallel
+if [ ! -f ../parallel_mst ]; then
+    echo "Error: Failed to compile parallel implementation"
+    exit 1
+fi
 cd ..
 
 # Arrays for vertices and edges
@@ -19,7 +23,11 @@ edges=(4000 20000 50000)
 sorting_methods=(1 2 3)
 
 # Compile the edge generator if not already compiled
-g++ -std=c++11 generate_edges.cpp -o edges
+g++ -std=c++14 generate_edges.cpp -o edges
+if [ ! -f edges ]; then
+    echo "Error: Failed to compile edge generator"
+    exit 1
+fi
 
 # Create results directory
 mkdir -p results

@@ -3,9 +3,11 @@ CXXFLAGS = -std=c++14 -O3 -I./header
 
 SRCS = main_sequential.cpp main/prims_sequential.cpp main/kruskals_sequential.cpp main/sequential_sort.cpp
 OBJS = $(SRCS:.cpp=.o)
-TARGET = sequential
+TARGET = ../sequential_mst
 
 all: $(TARGET)
+
+sequential_mst: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(CXX) -o $@ $(OBJS)
@@ -14,6 +16,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(OBJS)
+	rm -f $(TARGET)
 
-.PHONY: all clean
+.PHONY: all clean sequential_mst

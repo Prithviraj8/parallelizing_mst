@@ -19,7 +19,7 @@ run_test() {
         echo -e "\n=== Using sorting method $sort_method ==="
         
         # Run sequential implementation and save output
-        ./Sequential/sequential $V $E $sort_method "graph_${V}_${E}.txt" | tee -a "results/sequential_${V}_${E}_sort${sort_method}.txt"
+        ./sequential_mst $V $E $sort_method "graph_${V}_${E}.txt" | tee -a "results/sequential_${V}_${E}_sort${sort_method}.txt"
         echo ""
     done
     
@@ -42,8 +42,8 @@ fi
 echo "=== Compiling sequential implementation ==="
 cd Sequential
 make clean
-make
-if [ ! -f sequential ]; then
+make sequential_mst
+if [ ! -f ../sequential_mst ]; then
     echo "Error: Failed to compile sequential implementation"
     exit 1
 fi
