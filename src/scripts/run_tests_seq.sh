@@ -6,6 +6,10 @@ set -e
 # Create results directory if it doesn't exist
 mkdir -p results
 
+# Compile edge generator
+echo "=== Compiling edge generator ==="
+g++ -std=c++14 -O3 generate_edges.cpp -o edges
+
 # Compile sequential implementation
 echo "=== Compiling sequential implementation ==="
 cd Sequential && make clean && make && cd ..
@@ -25,6 +29,7 @@ run_test() {
     # Test with different sorting methods
     for sort_method in 1 2 3; do
         echo -e "\n=== Using sorting method $sort_method ==="
+        echo "Running sequential implementation:"
         
         # Run sequential implementation
         ./sequential_mst $V $E $sort_method "input.txt"
@@ -35,12 +40,12 @@ run_test() {
     echo -e "\n----------------------------------------"
 }
 
-# Test configurations matching parallel tests
+# Test configurations
 run_test 100 4000     # Small case
 run_test 1000 20000   # Medium case
 run_test 1500 50000   # Large case
 
 # Cleanup
-rm -f input.txt
+rm -f input.txt edges
 
 echo "All tests completed. Results are saved in the results directory."

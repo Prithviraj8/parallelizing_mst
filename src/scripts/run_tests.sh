@@ -6,6 +6,10 @@ set -e
 # Create results directory if it doesn't exist
 mkdir -p results
 
+# Compile edge generator
+echo "=== Compiling edge generator ==="
+g++ -std=c++14 -O3 generate_edges.cpp -o edges
+
 # Compile parallel implementation
 echo "=== Compiling parallel implementation ==="
 cd Parallel && make clean && make && cd ..
@@ -46,6 +50,6 @@ run_test 1000 20000   # Medium case
 run_test 1500 50000   # Large case
 
 # Cleanup
-rm -f input.txt
+rm -f input.txt edges
 
 echo "All tests completed. Results are saved in the results directory." 
