@@ -8,17 +8,19 @@ A parallel implementation of Minimum Spanning Tree (MST) algorithms using OpenMP
 1. Clone and enter the repository:
 ```bash
 git clone https://github.com/Prithviraj8/parallelizing_mst.git
-cd parallelizing_mst/src
+cd parallelizing_mst
 ```
 
-2. Build both sequential and parallel versions:
+2. Build all components:
 ```bash
+cd src
+
 # Build sequential version
-cd Sequential && make sequential_mst
+cd Sequential && make clean && make
 cd ..
 
 # Build parallel version
-cd Parallel && make parallel
+cd Parallel && make clean && make
 cd ..
 
 # Build edge generator
@@ -26,21 +28,25 @@ g++ -std=c++14 generate_edges.cpp -o edges
 ```
 
 ### Running Tests
-The project includes two test scripts that will automatically test both sequential and parallel implementations:
+The project includes two test scripts that will automatically test both implementations:
 
 1. For sequential tests:
 ```bash
-./run_tests_seq.sh
+cd src
+bash scripts/run_tests_seq.sh
 ```
 
 2. For parallel tests:
 ```bash
-./run_tests.sh
+cd src
+bash scripts/run_tests.sh
 ```
 
 Both scripts will:
+- Compile the necessary components
 - Generate test graphs automatically
 - Run all sorting methods (Bubble, Quick, and Merge Sort)
+- For parallel tests, run with different thread counts (1, 2, 4, 8)
 - Save results in the `results` directory
 
 ### Test Configurations
@@ -53,6 +59,7 @@ The tests cover three graph sizes:
 
 1. Generate a custom graph:
 ```bash
+cd src
 ./edges <vertices> <edges> <output_file>
 ```
 
@@ -69,19 +76,36 @@ The tests cover three graph sizes:
 Where:
 - sorting_algo: 1 (Bubble Sort), 2 (Quick Sort), 3 (Merge Sort)
 - num_threads: Number of OpenMP threads (1, 2, 4, or 8 recommended)
+- edges_file: Input file containing the graph edges
+
+### Directory Structure
+```
+parallelizing_mst/
+├── src/
+│   ├── Sequential/     # Sequential implementation
+│   ├── Parallel/       # Parallel implementation with OpenMP
+│   ├── scripts/        # Test scripts
+│   ├── results/        # Test results
+│   ├── edges          # Edge generator executable
+│   ├── sequential_mst # Sequential MST executable
+│   └── parallel_mst   # Parallel MST executable
+```
 
 ### Important Notes
-- After building, both executables (`sequential_mst` and `parallel_mst`) will be in the root `src` directory
-- Make sure to set execute permissions if needed:
-  ```bash
-  chmod +x sequential_mst parallel_mst
-  ```
+- All executables will be generated in the `src` directory
+- Make sure to run all commands from the `src` directory
+- The test scripts will handle all compilation and file management
+- Results will be displayed in the terminal and relevant metrics saved in the `results` directory
 
 ## Requirements
 - C++14 compiler (available on CIMS machines)
 - OpenMP (pre-installed on CIMS machines)
+- GNU Make (pre-installed on CIMS machines)
 
 ## Results
-Test results will be saved in the `results` directory, showing execution times and MST weights for each configuration.
+Test results will be displayed in the terminal, showing:
+- MST weights (to verify correctness)
+- Execution times for each configuration
+- Speedup metrics for parallel implementation
 
 For detailed performance analysis and implementation details, please refer to the project report.
