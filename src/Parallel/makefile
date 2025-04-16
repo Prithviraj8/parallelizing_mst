@@ -24,7 +24,7 @@ parallel: $(OBJ_DIR) $(OBJS)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) -c $< $(CXXFLAGS) -o $@
 
-$(OBJ_DIR)/main_parallel.o: main_parallel.cpp
+$(OBJ_DIR)/main_parallel.o: $(SRC_DIR)/main_parallel.cpp
 	$(CXX) -c $< $(CXXFLAGS) -o $@
 
 # Clean up the generated files

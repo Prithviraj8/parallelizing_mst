@@ -1,9 +1,10 @@
 #ifndef KRUSKALS_PARALLEL_H
 #define KRUSKALS_PARALLEL_H
 
-#include <bits/stdc++.h>
+#include <vector>
+#include <iostream>
+#include <algorithm>
 #include <omp.h>
-#include <parallel/algorithm>
 #include <parallel_sort.h>
 #include <cmath>
 #include <memory>

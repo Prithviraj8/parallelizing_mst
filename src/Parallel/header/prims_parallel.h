@@ -1,12 +1,14 @@
 #ifndef PRIMS_PARALLEL_H
 #define PRIMS_PARALLEL_H
 
-#include <bits/stdc++.h>
+#include <vector>
+#include <utility>
 #include <omp.h>
-#include <parallel/algorithm>
+#include <algorithm>
 #include <parallel_sort.h>
 #include <cmath>
 #include <stdexcept>
+#include <iostream>
 
 class PrimsGraph_p {
 private:

@@ -3,6 +3,10 @@
 # Exit on any error
 set -e
 
+# Get the directory where the script is located
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SRC_DIR="$( dirname "$SCRIPT_DIR" )"
+
 # Function to run tests for a specific configuration
 run_test() {
     local V=$1
@@ -30,24 +34,15 @@ run_test() {
 # Create results directory if it doesn't exist
 mkdir -p results
 
-# First compile the edge generator
-echo "=== Compiling edge generator ==="
-g++ -std=c++14 -O3 generate_edges.cpp -o edges
-if [ ! -f edges ]; then
-    echo "Error: Failed to compile edge generator"
-    exit 1
-fi
-
-# Compile sequential implementation
-echo "=== Compiling sequential implementation ==="
-cd Sequential
+# Compile everything using global Makefile
+echo "=== Compiling all implementations ==="
+cd "$SRC_DIR"
 make clean
-make sequential_mst
-if [ ! -f ../sequential_mst ]; then
+make all
+if [ ! -f sequential_mst ]; then
     echo "Error: Failed to compile sequential implementation"
     exit 1
 fi
-cd ..
 
 echo "=== Starting Phase 1: Basic Tests ==="
 
