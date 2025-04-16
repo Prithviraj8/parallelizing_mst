@@ -1,15 +1,16 @@
 #!/bin/bash
 
-# First compile the parallel implementations
-echo "=== Compiling parallel implementations ==="
+# First compile the parallel implementation
+echo "=== Compiling parallel implementation ==="
 cd Parallel
 make clean
-make parallel
-if [ ! -f ../parallel_mst ]; then
+make
+cd ..
+
+if [ ! -f parallel_mst ]; then
     echo "Error: Failed to compile parallel implementation"
     exit 1
 fi
-cd ..
 
 # Arrays for vertices and edges
 # Edges = V*(V-1)/2
@@ -29,7 +30,7 @@ if [ ! -f edges ]; then
     exit 1
 fi
 
-# Create results directory
+# Create results directory if it doesn't exist
 mkdir -p results
 
 # Run tests for each configuration
