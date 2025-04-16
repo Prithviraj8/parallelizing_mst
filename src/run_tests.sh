@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# First compile the parallel implementations
+echo "=== Compiling parallel implementations ==="
+cd Parallel
+make clean
+make parallel
+cd ..
+
 # Arrays for vertices and edges
 # Edges = V*(V-1)/2
 vertices=(100 1000 1500)
@@ -12,13 +19,13 @@ edges=(4000 20000 50000)
 sorting_methods=(1 2 3)
 
 # Compile the edge generator if not already compiled
-g++ -std=c++11 generateEdges.cpp -o edges
+g++ -std=c++11 generate_edges.cpp -o edges
 
 # Create results directory
 mkdir -p results
 
 # Run tests for each configuration
-for i in {0..4}; do
+for i in {0..2}; do
     v=${vertices[$i]}
     e=${edges[$i]}
     

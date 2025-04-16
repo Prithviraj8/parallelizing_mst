@@ -1,22 +1,40 @@
 // Parallel Sorting Algorithms
 #include "parallel_sort.h"
-
+#include <algorithm>
+#include <stdexcept>
 
 // ========================================
 // Parallel Bubble Sort
 // ========================================
 void parallelBubbleSort(std::vector<std::vector<int>>& edgeList, int NUMTHREADS) {
-    int n = edgeList.size();
+    if (NUMTHREADS <= 0) {
+        throw std::invalid_argument("Number of threads must be positive");
+    }
+
+    const int n = edgeList.size();
 
     #pragma omp parallel num_threads(NUMTHREADS)
     {
-        for(int i = 0; i < n; i ++) {
-            int first = i % 2;
+        for(int i = 0; i < n; i++) {
+            int first = i % 2;  // Alternate between even and odd phases
 
             #pragma omp for
             for(int j = first; j < n - 1; j += 2) {
-                if(edgeList[j][0] > edgeList[j + 1][0]) {
-                    std :: swap(edgeList[j], edgeList[j + 1]);
+                // Use stable comparison logic
+                bool shouldSwap = false;
+                if (edgeList[j][0] > edgeList[j + 1][0]) {
+                    shouldSwap = true;
+                } else if (edgeList[j][0] == edgeList[j + 1][0]) {
+                    if (edgeList[j][1] > edgeList[j + 1][1]) {
+                        shouldSwap = true;
+                    } else if (edgeList[j][1] == edgeList[j + 1][1] && 
+                             edgeList[j][2] > edgeList[j + 1][2]) {
+                        shouldSwap = true;
+                    }
+                }
+                
+                if (shouldSwap) {
+                    std::swap(edgeList[j], edgeList[j + 1]);
                 }
             }
         }
@@ -27,32 +45,64 @@ void parallelBubbleSort(std::vector<std::vector<int>>& edgeList, int NUMTHREADS)
 // Parallel Quick Sort
 // ========================================
 void parallelQuickSort(std::vector<std::vector<int>>& edgeList, int NUMTHREADS) {
-    int n = edgeList.size();
-    int scalingFactor = 100;
+    if (NUMTHREADS <= 0) {
+        throw std::invalid_argument("Number of threads must be positive");
+    }
 
-    int baseCutoff = n / scalingFactor;
-
-    int cutoff = std::max(1000, std::min(baseCutoff / NUMTHREADS, 10000));
+    const int n = edgeList.size();
+    const int scalingFactor = 100;
+    const int baseCutoff = n / scalingFactor;
+    const int cutoff = std::max(1000, std::min(baseCutoff / NUMTHREADS, 10000));
 
     #pragma omp parallel num_threads(NUMTHREADS)
     {
         #pragma omp single nowait
         {
-            quickSort_parallel_internal(edgeList, 0, edgeList.size() - 1, cutoff);
+            quickSort_parallel_internal(edgeList, 0, n - 1, cutoff);
         }
     }
 }
 
 void quickSort_parallel_internal(std::vector<std::vector<int>>& edgeList, int left, int right, int cutoff) {
-    if (left >= right) return; // Base case for recursion
+    if (left >= right) return;
 
     int i = left, j = right;
     std::vector<int> pivot = edgeList[left + (right - left) / 2];
 
-    // Partitioning
+    // Partitioning with stable comparison
     while (i <= j) {
-        while (i <= right && edgeList[i][0] < pivot[0]) i++;
-        while (j >= left && edgeList[j][0] > pivot[0]) j--;
+        while (i <= right) {
+            bool shouldMove = false;
+            if (edgeList[i][0] < pivot[0]) {
+                shouldMove = true;
+            } else if (edgeList[i][0] == pivot[0]) {
+                if (edgeList[i][1] < pivot[1]) {
+                    shouldMove = true;
+                } else if (edgeList[i][1] == pivot[1] && 
+                         edgeList[i][2] < pivot[2]) {
+                    shouldMove = true;
+                }
+            }
+            if (!shouldMove) break;
+            i++;
+        }
+
+        while (j >= left) {
+            bool shouldMove = false;
+            if (edgeList[j][0] > pivot[0]) {
+                shouldMove = true;
+            } else if (edgeList[j][0] == pivot[0]) {
+                if (edgeList[j][1] > pivot[1]) {
+                    shouldMove = true;
+                } else if (edgeList[j][1] == pivot[1] && 
+                         edgeList[j][2] > pivot[2]) {
+                    shouldMove = true;
+                }
+            }
+            if (!shouldMove) break;
+            j--;
+        }
+
         if (i <= j) {
             std::swap(edgeList[i], edgeList[j]);
             i++;
@@ -78,70 +128,75 @@ void quickSort_parallel_internal(std::vector<std::vector<int>>& edgeList, int le
     }
 }
 
-
 // ========================================
 // Parallel Merge Sort
 // ========================================
 void parallelMerge(std::vector<std::vector<int>>& edgeList, int left, int mid, int right) {
-    std::vector<std::vector<int>> temp(right - left + 1); // Temporary buffer
+    std::vector<std::vector<int>> temp(right - left + 1);
     int i = left, j = mid + 1, k = 0;
 
-    // Merge two sorted halves into the temporary array
     while (i <= mid && j <= right) {
-        if (edgeList[i][0] <= edgeList[j][0]) { // Compare based on edgeList[i][0]
+        bool useLeft = true;
+        if (edgeList[i][0] > edgeList[j][0]) {
+            useLeft = false;
+        } else if (edgeList[i][0] == edgeList[j][0]) {
+            if (edgeList[i][1] > edgeList[j][1]) {
+                useLeft = false;
+            } else if (edgeList[i][1] == edgeList[j][1] && 
+                      edgeList[i][2] > edgeList[j][2]) {
+                useLeft = false;
+            }
+        }
+        
+        if (useLeft) {
             temp[k++] = edgeList[i++];
         } else {
             temp[k++] = edgeList[j++];
         }
     }
 
-    // Copy remaining elements from both halves
     while (i <= mid) temp[k++] = edgeList[i++];
     while (j <= right) temp[k++] = edgeList[j++];
 
-    // Copy back from temporary array to original array
     std::copy(temp.begin(), temp.end(), edgeList.begin() + left);
 }
 
 void parallelMergeSort_internal(std::vector<std::vector<int>>& edgeList, int left, int right, int cutoff) {
     if (left < right) {
-        int mid = left + (right - left) / 2;
+        const int mid = left + (right - left) / 2;
 
         if ((right - left) > cutoff) {
-            // Create tasks for parallel execution of subproblems
             #pragma omp task shared(edgeList)
             parallelMergeSort_internal(edgeList, left, mid, cutoff);
 
             #pragma omp task shared(edgeList)
             parallelMergeSort_internal(edgeList, mid + 1, right, cutoff);
 
-            #pragma omp taskwait // Wait for both tasks to complete
+            #pragma omp taskwait
         } else {
-            // Fallback to sequential merge sort for small partitions
             parallelMergeSort_internal(edgeList, left, mid, cutoff);
             parallelMergeSort_internal(edgeList, mid + 1, right, cutoff);
         }
 
-        // Merge the two halves
         parallelMerge(edgeList, left, mid, right);
     }
 }
 
 void parallelMergeSort(std::vector<std::vector<int>>& edgeList, int NUMTHREADS) {
-    int n = edgeList.size();              // Input size
-    int scalingFactor = 100;              // Tunable scaling factor
+    if (NUMTHREADS <= 0) {
+        throw std::invalid_argument("Number of threads must be positive");
+    }
 
-    // Dynamically calculate base cutoff based on input size
-    int baseCutoff = n / scalingFactor;
-
-    // Adjust base cutoff based on number of threads
-    int cutoff = std::max(1000, std::min(baseCutoff / NUMTHREADS, 10000));
+    const int n = edgeList.size();
+    const int scalingFactor = 100;
+    const int baseCutoff = n / scalingFactor;
+    const int cutoff = std::max(1000, std::min(baseCutoff / NUMTHREADS, 10000));
 
     #pragma omp parallel num_threads(NUMTHREADS)
     {
         #pragma omp single nowait
         {
-            parallelMergeSort_internal(edgeList, 0, edgeList.size() - 1, cutoff);
+            parallelMergeSort_internal(edgeList, 0, n - 1, cutoff);
         }
     }
 }

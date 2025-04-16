@@ -4,32 +4,33 @@
 #include <vector>
 #include <iostream>
 #include <climits>
-#include<sequential_sort.h>
+#include <stdexcept>
+#include <sequential_sort.h>
 
 using namespace std;
 
 class PrimsGraph {
-    int selection;
-    // Store all edges
-    vector<vector<int>> graph;
-    // Parent node for the current
-    vector<int> parent;
-    // Weight to the node
-    vector<int> key;
-    // Whether included in MST or not
-    vector<bool> MSTset;
+private:
+    const int selection;
+    const int Vertices;
+    
+    // Graph representation
+    vector<vector<int>> graph;    // Adjacency matrix
+    vector<int> parent;           // Parent nodes in MST
+    vector<int> key;             // Key values used to pick minimum weight edge
+    vector<bool> MSTset;         // Track vertices included in MST
 
-    int Vertices;
 public:
+    // Constructor
     PrimsGraph(int V, int s);
 
-    void EnterEdges(int&, int&, int&);
-
-    pair<int,int> FindNextMin();
-
+    // Graph operations
+    void EnterEdges(int& u, int& v, int& w);
+    
+    // MST operations
+    pair<int,int> FindNextMin() const;
     void PrimMST();
-
-    void PrintPrimsMST();
+    void PrintPrimsMST() const;
 };
 
 #endif // PRIMS_SEQUENTIAL_H

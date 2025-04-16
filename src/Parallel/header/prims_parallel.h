@@ -1,39 +1,31 @@
 #ifndef PRIMS_PARALLEL_H
 #define PRIMS_PARALLEL_H
 
-#include<bits/stdc++.h>
-#include<omp.h>
+#include <bits/stdc++.h>
+#include <omp.h>
 #include <parallel/algorithm>
-#include<parallel_sort.h>
-// #include <parallel/settings.h>
+#include <parallel_sort.h>
 #include <cmath>
-
-using namespace std;
+#include <stdexcept>
 
 class PrimsGraph_p {
-    int NUMTHREADS;
-    // selection for sorting algo
-    int selection;
-    // Store all edges
-    vector<vector<int> > graph;
-    // Parent node for the current
-    vector<int> parent;
-    // Weight to the node
-    vector<int> key;
-    // Whether included in MST or not
-    vector<bool> MSTset;
+private:
+    const int NUMTHREADS;
+    const int selection;
+    const int Vertices;
+    
+    std::vector<std::vector<int>> graph;
+    std::vector<int> parent;
+    std::vector<int> key;
+    std::vector<bool> MSTset;
 
-    int Vertices;
 public:
     PrimsGraph_p(int V, int s, int n);
 
-    void EnterEdges(int&, int&, int&);
-
-    pair<int,int> FindNextMin();
-
+    void EnterEdges(int& u, int& v, int& w);
+    std::pair<int, int> FindNextMin();
     void PrimMST();
-    
-    void PrintPrimsMST();
+    void PrintPrimsMST() const;
 };
 
 #endif // PRIMS_PARALLEL_H

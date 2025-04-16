@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++11 -O3 -I./header
+CXXFLAGS = -std=c++14 -O3 -I./header
 
 SRCS = main_sequential.cpp main/prims_sequential.cpp main/kruskals_sequential.cpp main/sequential_sort.cpp
 OBJS = $(SRCS:.cpp=.o)

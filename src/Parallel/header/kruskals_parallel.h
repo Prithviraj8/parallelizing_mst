@@ -1,46 +1,48 @@
 #ifndef KRUSKALS_PARALLEL_H
 #define KRUSKALS_PARALLEL_H
 
-#include<bits/stdc++.h>
-#include<omp.h>
-#include<parallel/algorithm>
+#include <bits/stdc++.h>
+#include <omp.h>
+#include <parallel/algorithm>
 #include <parallel_sort.h>
-// #include <parallel/settings.h>
 #include <cmath>
+#include <memory>
+#include <stdexcept>
 
 using namespace std;
 
 class UnionSet_p {
+private:
     int* parent;
     int* rank;
 
 public:
-    UnionSet_p(int n);
+    explicit UnionSet_p(int n);
+    ~UnionSet_p();
     
-    int findParent(int);
+    // Prevent copying
+    UnionSet_p(const UnionSet_p&) = delete;
+    UnionSet_p& operator=(const UnionSet_p&) = delete;
 
-    void Union(int&, int&);
+    int findParent(int node);
+    void Union(int& u, int& v);
 };
 
 class KruskalsGraph_p {
-    // selection for sorting algo
-    int NUMTHREADS;
-    int selection;
-    vector<vector<int> > edgeList;
-    vector<vector<int> > Parent;
-
-    int Vertices;
+private:
+    const int NUMTHREADS;
+    const int selection;
+    const int Vertices;
+    std::vector<std::vector<int>> edgeList;
+    std::vector<std::vector<int>> Parent;
 
 public:
     KruskalsGraph_p(int V, int s, int n);
 
-    void EnterEdges(int&, int&, int&);
-
+    void EnterEdges(int& u, int& v, int& w);
     void SortList();
-
     void KruskalMST();
-
-    void PrintKruskalMST();
+    void PrintKruskalMST() const;
 };
 
 #endif // KRUSKALS_PARALLEL_H
