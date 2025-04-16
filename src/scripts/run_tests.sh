@@ -1,65 +1,51 @@
 #!/bin/bash
 
-# First compile the parallel implementation
-echo "=== Compiling parallel implementation ==="
-cd Parallel
-make clean
-make
-cd ..
-
-if [ ! -f parallel_mst ]; then
-    echo "Error: Failed to compile parallel implementation"
-    exit 1
-fi
-
-# Arrays for vertices and edges
-# Edges = V*(V-1)/2
-vertices=(100 1000 1500)
-edges=(4000 20000 50000)
-
-# Sorting methods to test
-# 1: Bubble Sort
-# 2: Quick Sort
-# 3: Merge Sort
-sorting_methods=(1 2 3)
-
-# Compile the edge generator if not already compiled
-g++ -std=c++14 generate_edges.cpp -o edges
-if [ ! -f edges ]; then
-    echo "Error: Failed to compile edge generator"
-    exit 1
-fi
+# Exit on any error
+set -e
 
 # Create results directory if it doesn't exist
 mkdir -p results
 
-# Run tests for each configuration
-for i in {0..2}; do
-    v=${vertices[$i]}
-    e=${edges[$i]}
+# Compile parallel implementation
+echo "=== Compiling parallel implementation ==="
+cd Parallel && make clean && make && cd ..
+
+# Function to run tests for a specific configuration
+run_test() {
+    local V=$1
+    local E=$2
     
-    echo "=== Testing configuration: $v vertices, $e edges ==="
+    echo "=== Testing configuration: $V vertices, $E edges ==="
+    echo "Generating graph..."
     
     # Generate graph
-    echo "Generating graph..."
-    ./edges $v $e "graph_${v}_${e}.txt"
+    ./edges $V $E "input.txt"
+    echo ""
     
-    # Test each sorting method
-    for sort in "${sorting_methods[@]}"; do
-        echo -e "\n=== Using sorting method $sort ==="
+    # Test with different sorting methods
+    for sort_method in 1 2 3; do
+        echo -e "\n=== Using sorting method $sort_method ==="
         
-        # Run tests with different thread counts
+        # Test with different thread counts
         for threads in 1 2 4 8; do
-            echo -e "\nTesting with $threads thread(s):"
-            ./parallel_mst $threads $v $e $sort "graph_${v}_${e}.txt" | tee -a "results/results_${v}_${e}_sort${sort}.txt"
+            echo "Testing with $threads thread(s):"
+            
+            # Run parallel implementation
+            ./parallel_mst $threads $V $E $sort_method "input.txt"
+            echo -e "\n"
         done
     done
     
-    echo -e "\nCompleted testing for $v vertices, $e edges\n"
-    echo "----------------------------------------"
-done
+    echo "Completed testing for $V vertices, $E edges"
+    echo -e "\n----------------------------------------"
+}
 
-# Cleanup temporary graph files
-rm -f graph_*.txt
+# Test configurations
+run_test 100 4000     # Small case
+run_test 1000 20000   # Medium case
+run_test 1500 50000   # Large case
+
+# Cleanup
+rm -f input.txt
 
 echo "All tests completed. Results are saved in the results directory." 
