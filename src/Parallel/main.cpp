@@ -1,7 +1,12 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+#include <chrono>
+#include <cstdlib>
 #include <tuple>
-#include <prims_parallel.h>
-#include <kruskals_parallel.h>
+#include <prims.h>
+#include <kruskals.h>
 
 using namespace std;
 

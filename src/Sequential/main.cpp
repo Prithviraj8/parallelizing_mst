@@ -6,8 +6,8 @@
 #include <sstream>
 #include <chrono>
 #include <cstdlib>
-#include <prims_sequential.h>
-#include <kruskals_sequential.h>
+#include <prims.h>
+#include <kruskals.h>
 
 using namespace std;
 

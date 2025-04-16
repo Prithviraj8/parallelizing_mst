@@ -26,8 +26,8 @@ build/
 # Generated executables
 test_prims
 test_kruskals
-sequential
-parallel
+sequential_mst
+parallel_mst
 obj/
 
 # Dependencies
