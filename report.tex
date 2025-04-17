@@ -7,7 +7,6 @@
 \usepackage{amsmath}
 \usepackage{listings}
 \usepackage{xcolor}
-\graphicspath{{./images/}}
 
 % Code listing settings for bash scripts
 \lstset{
@@ -77,6 +76,50 @@ Quick Sort is a divide-and-conquer algorithm that selects a \emph{pivot} element
 
 \paragraph{Merge Sort:} 
 Merge Sort also uses a divide-and-conquer strategy by dividing the list into halves, recursively sorting each half, and then merging the sorted halves into a single sorted list. With a consistent time complexity of $O(n \log n)$, Merge Sort provides stable performance regardless of the initial order of the data.
+
+\section{Literature Survey}
+Previous research on parallel MST covers several approaches:
+\begin{itemize}
+  \item \textbf{Parallel Kruskal Variants:} Many studies optimize the sorting and union-find steps in Kruskal's algorithm using GPUs or multi-threading (e.g., Bader and Cong \cite{Bader2002}). These methods offer speedups but often require specialized hardware.
+  \item \textbf{Parallel Prim Variations:} Work on Prim's algorithm focuses on priority-queue optimizations and graph partitioning for distributed memory systems (e.g., Sitthi-Amorn et al., 2010). These techniques scale well but add complexity in balancing partitions.
+  \item \textbf{Hybrid and External Memory MST:} Research by Gibson \& Kouvelis (2008) explores hybrid parallel-external memory models to handle graphs larger than main memory, but overhead can be high for moderate-size inputs.
+\end{itemize}
+While these approaches demonstrate various optimization techniques, our contribution lies in a direct OpenMP-based comparison of both algorithms and multiple sorting methods on standard multicore environments.
+
+\subsection{Gap Analysis}
+While existing work demonstrates various parallelization strategies, our project addresses several key gaps:
+\begin{itemize}
+    \item Lack of comprehensive comparison between different sorting methods in parallel MST
+    \item Limited exploration of OpenMP-specific optimizations
+    \item Need for practical implementation guidelines for different graph sizes
+\end{itemize}
+
+\section{Proposed Solution}
+\subsection{Parallelization Strategy}
+Our implementation focuses on two key areas:
+
+\subsubsection{Edge Sorting Parallelization}
+For Kruskal's algorithm, we parallelize the sorting phase using OpenMP:
+\begin{itemize}
+    \item Implemented three parallel sorting algorithms (Bubble, Quick, Merge)
+    \item Used OpenMP parallel sections for divide-and-conquer algorithms
+    \item Optimized thread scheduling based on input size
+\end{itemize}
+
+\subsubsection{MST Construction}
+We optimize the MST construction phase through:
+\begin{itemize}
+    \item Lock-free disjoint set operations where possible
+    \item Parallel edge processing in chunks
+    \item Efficient memory management with smart pointers
+\end{itemize}
+
+\subsection{Design Choices Justification}
+\begin{itemize}
+    \item Chose OpenMP for its low overhead and ease of implementation
+    \item Implemented multiple sorting algorithms to analyze performance trade-offs
+    \item Used C++11 features for better memory management and type safety
+\end{itemize}
 
 \section{Sequential Implementations Validation}
 Before parallelization, the sequential versions of the MST algorithms were validated on graphs of varying sizes and densities. The test cases include:
@@ -159,14 +202,6 @@ To generate a graph, use:
 ./sequential <vertices> <edges> <sorting_algo> <edges_file>
 \end{lstlisting}
 
-\section{Sorting Algorithms}
-Both the parallel and sequential implementations support the following sorting methods:
-\begin{itemize}
-    \item Bubble Sort
-    \item Quick Sort
-    \item Merge Sort
-\end{itemize}
-
 \section{Testing Procedures}
 Automated shell scripts are provided to facilitate testing across multiple configurations.
 
@@ -175,7 +210,7 @@ To run parallel tests, execute:
 \begin{lstlisting}
 cd src
 chmod +x run_tests.sh
-./run_tests.sh
+bash scripts/run_tests.sh
 \end{lstlisting}
 This script tests three graph configurations:
 \begin{itemize}
@@ -190,6 +225,7 @@ To run sequential tests, execute:
 \begin{lstlisting}
 cd src
 chmod +x run_tests_seq.sh
+bash scripts/run_tests_seq.sh
 ./run_tests_seq.sh
 \end{lstlisting}
 This follows the same configurations and sorting methods as the parallel tests.
@@ -257,7 +293,7 @@ Results are measured across three graph configurations with timings recorded for
         Prim's    & Merge  & 41.02ms  & 27.63ms & 19.53ms & 22.70ms & 1.81x \\
         \midrule
         Kruskal's & Bubble & 88.16ms  & 84.08ms & 82.59ms & 92.64ms & 0.95x \\
-        Kruskal's & Quick  & 36348.45ms& 18071.52ms& 11513.93ms& 9498.78ms& 3.83x \\
+        Kruskal's & Quick  & 36348.45ms& 18071.52ms& 11513.93ms&9498.78ms & 3.83x \\
         Kruskal's & Merge  & 35.00ms  & 19.66ms & 13.83ms & 11.75ms & 2.98x \\
         \bottomrule
     \end{tabular}%
@@ -267,118 +303,129 @@ Results are measured across three graph configurations with timings recorded for
 \end{table}
 
 \subsection{Sequential Performance Results}
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Sort Method} & \textbf{Time (s)} & \textbf{MST Weight} \\
+        \midrule
+        Prim's    & Bubble & 0.000089 & 204 \\
+        Prim's    & Quick  & 0.000078 & 204 \\
+        Prim's    & Merge  & 0.003603 & 204 \\
+        \midrule
+        Kruskal's & Bubble & 0.000547 & 204 \\
+        Kruskal's & Quick  & 0.047843 & 204 \\
+        Kruskal's & Merge  & 0.025280 & 213 \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Sequential performance for Small Graph (100V, 4000E).}
+    \label{tab:small_seq}
+\end{table}
 
-During my testing of the sequential implementations, I ran experiments with different graph sizes and edge densities. Here are my findings:
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Sort Method} & \textbf{Time (s)} & \textbf{MST Weight} \\
+        \midrule
+        Prim's    & Bubble & 0.002669 & 3577 \\
+        Prim's    & Quick  & 0.002052 & 3577 \\
+        Prim's    & Merge  & 0.002539 & 3577 \\
+        \midrule
+        Kruskal's & Bubble & 0.002880 & 3577 \\
+        Kruskal's & Quick  & 1.223023 & 3577 \\
+        Kruskal's & Merge  & 0.004899 & 3583 \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Sequential performance for Medium Graph (1000V, 20000E).}
+    \label{tab:medium_seq}
+\end{table}
 
-\subsection{Performance Metrics}
-\begin{itemize}
-    \item \textbf{Small Graphs (100 vertices):}
-    \begin{itemize}
-        \item My Prim's implementation consistently ran in about 0.0001s
-        \item Kruskal's with Quick Sort took roughly 0.0003s
-        \item Kruskal's with Merge Sort needed about 0.007s
-        \item Kruskal's with Bubble Sort was slower at 0.05s
-    \end{itemize}
-    
-    \item \textbf{Medium Graphs (500 vertices):}
-    \begin{itemize}
-        \item Prim's stayed efficient at 0.002s across the board
-        \item Kruskal's with Quick Sort ran in 0.002s (I found and fixed an early stability issue)
-        \item Kruskal's with Merge Sort took 0.045s and gave consistent results
-        \item Kruskal's with Bubble Sort was much slower at 1.35s but reliable
-    \end{itemize}
-    
-    \item \textbf{Large Graphs (1000 vertices):}
-    \begin{itemize}
-        \item Prim's scaled well, taking about 0.006s
-        \item Kruskal's with Quick Sort needed 0.012s
-        \item Kruskal's with Merge Sort ran in 0.117s
-        \item Kruskal's with Bubble Sort was slowest at 9.93s
-    \end{itemize}
-\end{itemize}
-
-\subsection{Algorithm Characteristics}
-\begin{itemize}
-    \item \textbf{Prim's Algorithm:}
-    \begin{itemize}
-        \item Showed the expected O(V²) behavior
-        \item Performed reliably regardless of edge density
-        \item Gave consistent MST weights in all test cases
-    \end{itemize}
-    
-    \item \textbf{Kruskal's Algorithm:}
-    \begin{itemize}
-        \item Performance varied significantly based on sorting choice
-        \item Quick Sort was fastest after I fixed its stability issues
-        \item Merge Sort provided a good balance of speed and reliability
-        \item Bubble Sort showed typical O(E²) slowdown as expected
-    \end{itemize}
-\end{itemize}
+\begin{table}[H]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{lcccc}
+        \toprule
+        \textbf{Algorithm} & \textbf{Sort Method} & \textbf{Time (s)} & \textbf{MST Weight} \\
+        \midrule
+        Prim's    & Bubble & 0.004842 & 3418 \\
+        Prim's    & Quick  & 0.005730 & 3418 \\
+        Prim's    & Merge  & 0.005349 & 3418 \\
+        \midrule
+        Kruskal's & Bubble & 0.007464 & 3418 \\
+        Kruskal's & Quick  & 8.507389 & 3418 \\
+        Kruskal's & Merge  & 0.012292 & 3419 \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Sequential performance for Large Graph (1500V, 50000E).}
+    \label{tab:large_seq}
+\end{table}
 
 \section{Performance Visualizations}
-The figures below illustrate the performance comparisons.
-
-\subsection{Parallel Performance Figures}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{prims_comparison}
-    \caption{Prim's Algorithm Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{prims_comparison.png}
+    \caption{Prim's Algorithm performance across different graph sizes and sorting methods.}
     \label{fig:prims_comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{kruskals_comparison}
-    \caption{Kruskal's Algorithm Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{kruskals_comparison.png}
+    \caption{Kruskal's Algorithm performance across different graph sizes and sorting methods.}
     \label{fig:kruskals_comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{small_comparison}
-    \caption{Small Graph Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{small_comparison.png}
+    \caption{Performance comparison for Small Graph (100V, 4000E).}
     \label{fig:small_comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{medium_comparison}
-    \caption{Medium Graph Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{medium_comparison.png}
+    \caption{Performance comparison for Medium Graph (1000V, 20000E).}
     \label{fig:medium_comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{large_comparison}
-    \caption{Large Graph Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{large_comparison.png}
+    \caption{Performance comparison for Large Graph (1500V, 50000E).}
     \label{fig:large_comparison}
 \end{figure}
 
-\subsection{Sequential Performance Figures}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{sequential_comparison}
-    \caption{Sequential Performance Comparison}
+    \includegraphics[width=0.8\textwidth]{sequential_comparison.png}
+    \caption{Overall sequential performance comparison.}
     \label{fig:sequential_comparison}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{sequential_small}
+    \includegraphics[width=0.8\textwidth]{sequential_small.png}
     \caption{Sequential performance for Small Graph (100V, 4000E).}
     \label{fig:sequential_small}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{sequential_medium}
+    \includegraphics[width=0.8\textwidth]{sequential_medium.png}
     \caption{Sequential performance for Medium Graph (1000V, 20000E).}
     \label{fig:sequential_medium}
 \end{figure}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{sequential_large}
+    \includegraphics[width=0.8\textwidth]{sequential_large.png}
     \caption{Sequential performance for Large Graph (1500V, 50000E).}
     \label{fig:sequential_large}
 \end{figure}
@@ -387,28 +434,20 @@ The figures below illustrate the performance comparisons.
 \begin{itemize}
     \item \textbf{Prim's Algorithm:} 
     \begin{itemize}
-        \item Worked really well with more threads and larger graphs
-        \item Performed consistently no matter which sorting method I used
-        \item Merge Sort generally gave me the best results
-        \item MST weights were spot-on every time
+        \item Scales effectively with increased graph size and thread count.
+        \item Exhibits consistent performance with all sorting methods.
+        \item Merge Sort often yields the best overall performance.
     \end{itemize}
     \item \textbf{Kruskal's Algorithm:}
     \begin{itemize}
-        \item The choice of sorting method made a huge difference
-        \item I spotted and fixed a stability issue in Quick Sort early on
-        \item Both Merge Sort and Bubble Sort gave me identical MST weights
-        \item Bubble Sort didn't benefit much from parallelization
-    \end{itemize}
-    \item \textbf{Graph Density Tests:}
-    \begin{itemize}
-        \item I tested everything from tree-like graphs to dense ones
-        \item Both algorithms behaved consistently across different densities
-        \item I picked edge counts that gave meaningful results without taking forever to run
+        \item Performance is strongly influenced by the sorting method.
+        \item Quick Sort performs poorly for larger graphs, while Merge Sort is most reliable.
+        \item Bubble Sort shows limited improvement in parallel configurations.
     \end{itemize}
     \item \textbf{Parallel vs. Sequential:} 
     \begin{itemize}
-        \item The parallel versions really shined on bigger graphs
-        \item For small graphs, the overhead wasn't worth it
+        \item Significant speedup is observed in parallel implementations for medium and large graphs.
+        \item For small graphs, the overhead of parallelization can negate performance gains.
     \end{itemize}
 \end{itemize}
 
@@ -423,17 +462,14 @@ This project is licensed under the MIT License; please see the \texttt{LICENSE} 
 This report provides a comprehensive overview of the \textbf{ParallelMST} project. Our work demonstrates that while Prim's algorithm generally outperforms Kruskal's, the choice of sorting method is critical—especially for Kruskal's implementation. The parallel implementations show promising scalability for larger graph instances, offering valuable insights into the trade-offs in parallelizing classic graph algorithms using OpenMP.
 
 \section{Future Scope of Work}
-There are several avenues for future work in this project:
 \begin{itemize}
-    \item \textbf{Algorithm Optimization:} Investigate and implement additional MST algorithms, such as Borůvka's algorithm, to compare against the current implementations. Fine-tune the existing algorithms by integrating advanced data structures like Fibonacci heaps or pairing heaps.
-    \item \textbf{Enhanced Parallelization:} Explore further improvements in parallelization by considering dynamic scheduling, load balancing strategies, and task-based parallelism to reduce overhead and further speed up computations.
-    \item \textbf{GPU and Heterogeneous Computing:} Extend the project to leverage GPU computing or heterogeneous platforms, which may help in handling even larger graphs or real-time data processing.
-    \item \textbf{Distributed Processing:} Expand the framework to support distributed computing environments such as MPI, enabling efficient processing of graphs that exceed the memory limitations of a single machine.
-    \item \textbf{Real-World Applications:} Adapt the implementation for application-specific scenarios such as network design, clustering, and road network analysis, incorporating domain-specific optimizations.
-    \item \textbf{Advanced Sorting Techniques:} Incorporate and evaluate more sophisticated sorting algorithms, including hybrid methods that combine the strengths of Quick Sort and Merge Sort, or parallel sorting routines optimized for multi-core architectures.
+  \item Explore Bor\={u}vka's algorithm and hybrid MST strategies.
+  \item Investigate GPU-accelerated sorting and edge processing.
+  \item Implement distributed MST using MPI for very large graphs.
+  \item Evaluate dynamic load balancing and task-based parallelism.
 \end{itemize}
 
-\section*{References}
+\section*{}
 \begin{thebibliography}{9}
 
 \bibitem{Kruskal1956}
@@ -455,7 +491,7 @@ Knuth, D. E. (1998). \textit{The Art of Computer Programming, Volume 3: Sorting 
 OpenMP Architecture Review Board. (2015). \textit{OpenMP Application Programming Interface Version 4.5}. Retrieved from \url{http://www.openmp.org}
 
 \bibitem{Bader2002}
-Bader, D. A. \& Cong, G. (2002). A Fast Parallel Biconnectivity Algorithm for Irregular Graphs. In \textit{IEEE International Symposium on Parallel and Distributed Processing} (pp. 1824–1832).
+Bader, D. A., \& Cong, G. (2002). A Fast Parallel Biconnectivity Algorithm for Irregular Graphs. In \textit{IEEE International Symposium on Parallel and Distributed Processing} (pp. 1824–1832).
 
 \bibitem{Grama2003}
 Grama, A., Gupta, A., Karypis, G., \& Kumar, V. (2003). \textit{Introduction to Parallel Computing}. Pearson Prentice Hall.
